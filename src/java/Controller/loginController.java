@@ -27,7 +27,7 @@ import javax.servlet.http.HttpSession;
 @SessionScoped
 public class loginController {
 
-    private String username, password, userType,loginName;
+    private String username, password, userType = "",loginName;
     public boolean islogged = false;
 
     public String getUsername() {

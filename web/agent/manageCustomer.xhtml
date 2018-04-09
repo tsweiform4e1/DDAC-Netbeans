@@ -1,0 +1,179 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Manage Customer</title>
+        <style>
+            .backgroundImg{background-image: url("../resources/images/background.jpg"); background-repeat: no-repeat;background-size: cover; text-align: center}
+        </style>
+    </h:head>
+    <h:body styleClass="backgroundImg">
+        <ui:include src="agentHeader.xhtml"/>
+        <h:form styleClass="form-horizontal" id="customerform">
+            
+                <br></br>
+                <h1>Manage Customer</h1>
+                <p:tabView dynamic="true" cache="true" effect="fold">
+                    <p:tab title="Register New Customer">
+                        <p:growl id="message1" showDetail="true" autoUpdate="true"/>
+                        <div class="input-group">          
+                            <span class="input-group-addon" id="basic-addon1" style="width: 100px">Name</span>
+                            <p:inputText a:placeholder ="Name" styleClass="form-control" value="#{customerBean.tempN}" required="true" requiredMessage="Please fill in the customer's name." validatorMessage="Minimum legth for Name is 2 values.">
+                                <f:validateLength minimum="2"/>
+                            </p:inputText>
+                        </div>                            
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1" style="width: 100px">Gender</span>
+                            <p:selectOneRadio value="#{customerBean.tempG}" id="gender" required="true" requiredMessage="Please select a gender.">
+                                <f:selectItem itemValue="Male" itemLabel="Male"/>
+                                <f:selectItem itemValue="Female" itemLabel="Female"/>                                
+                            </p:selectOneRadio>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1" style="width: 100px">E-mail</span>
+                            <p:inputText a:placeholder ="E-mail" styleClass="form-control" value="#{customerBean.tempEM}" required="true" requiredMessage="Please fill in the customer's E-mail." validatorMessage="Invalid Email.">
+                                <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$" />
+                            </p:inputText>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1" style="width: 100px">Address</span>
+                            <p:inputText a:placeholder ="Address" styleClass="form-control" value="#{customerBean.tempA}" required="true" requiredMessage="Please fill in the customer's address." validatorMessage="Minimum length for Address is 10 values.">
+                                <f:validateLength minimum='10'/>
+                            </p:inputText>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <h:commandButton value="Register" styleClass="btn btn-primary" action="#{customerBean.registerCustomer()}"/>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Customer List">                   
+                        <p:dataTable var="cust" value="#{customerBean.allCustomer}" 
+                                     filteredValue="#{customerBean.filteredCustomerList}" 
+                                     widgetVar="customerTable" id="customerTable">
+
+                            <f:facet name="header">
+                                <p:outputPanel>
+                                    <h:outputText value="Customer List"/>
+                                </p:outputPanel>
+                            </f:facet>
+
+                            <p:column headerText="CustID" filterBy="#{cust.custID}"  filterMatchMode="contains" style="width: auto">
+                                <h:outputText value="#{cust.custID}"/>
+                            </p:column>
+
+                            <p:column headerText="Name" filterBy="#{cust.name}" filterMatchMode="contains" style="width: auto">
+                                <h:outputText value="#{cust.name}"/>
+                            </p:column>                            
+
+                            <p:column filterBy="#{cust.gender}" headerText="Gender" filterMatchMode="exact" style="width: auto">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('customerTable').filter()">
+                                        <f:selectItem itemLabel="Select One..." itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{customerBean.genderlist}" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText value="#{cust.gender}"/>
+                            </p:column>
+
+                            <p:column headerText="E-mail" filterBy="#{cust.email}" filterMatchMode="contains" style="width: auto">
+                                <h:outputText value="#{cust.email}"/>
+                            </p:column>  
+
+                            <p:column headerText="Address" filterBy="#{cust.address}" filterMatchMode="contains" style="width: auto">
+                                <h:outputText value="#{cust.address}"/>
+                            </p:column>  
+
+                            <p:column filterBy="#{cust.status}" headerText="Status" filterMatchMode="exact" style="width: auto">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('customerTable').filter()">
+                                        <f:selectItem itemLabel="Select One..." itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{customerBean.statuslist}" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText value="#{cust.status}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    
+                    <p:tab title="Manage Customer Accounts">  
+                        <p:growl id="message2" showDetail="true" autoUpdate="true"/>
+                        <div class="col-sm-10">
+                            <div class="input-group">                                
+                                <h:inputText class="form-control" binding="#{input1}" id="input1" a:placeholder="CustID" onkeypress="if (event.which &lt; 48 || event.which &gt; 57) return false;"/> 
+                                <p:commandButton class="btn btn-secondary" process="@this input1" value="Search" action="#{customerBean.searchCustomer(input1.value)}" style="margin-left: 10px" update="CustID Name Gender E-mail Address Status"/>
+                            </div>
+                            <br></br>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 100px">CustID</span>
+                                <p:inputText id="CustID" type="text" class="form-control" readonly="true" placeholder="CustID" value="#{customerBean.targetCust.custID}" />
+                            </div>
+                            <br/>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 100px">Name</span>
+                                <p:inputText id="Name" type="text" class="form-control" readonly="#{!customerBean.btnb}" placeholder="Name" value="#{customerBean.targetCust.name}" validatorMessage="Minimum length for Name is 2 values."  required="true" requiredMessage="Please fill in the customer's name.">
+                                    <f:validateLength minimum="2"/>    
+                                </p:inputText>
+                            </div>                            
+                            <br/>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 100px">Gender</span>
+                                <p:selectOneRadio disabled="#{!customerBean.btnb}" id="Gender" value="#{customerBean.targetCust.gender}">
+                                    <f:selectItem itemValue="Male" itemLabel="Male"/>
+                                    <f:selectItem itemValue="Female" itemLabel="Female"/>
+                                </p:selectOneRadio>
+                            </div>
+                            <br/>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 100px">E-mail</span>
+                                <p:inputText id="E-mail" type="text" class="form-control" readonly="#{!customerBean.btnb}" placeholder="E-mail" value="#{customerBean.targetCust.email}" validatorMessage="Invalid Email."  required="true" requiredMessage="Please fill in the customer's E-mail.">
+                                    <f:validateRegex pattern="^[_A-Za-z0-9-\+]+(\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\.[A-Za-z0-9]+)*(\.[A-Za-z]{2,})$"/>
+                                </p:inputText>
+                            </div>    
+                            <br/>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 100px">Address</span>
+                                <p:inputText id="Address" type="text" class="form-control" readonly="#{!customerBean.btnb}" placeholder="Address" value="#{customerBean.targetCust.address}" validatorMessage="Minimum length for Address is 10 values."  required="true" requiredMessage="Please fill in the customer's address." >
+                                    <f:validateLength minimum="10"/>
+                                </p:inputText>
+                            </div>    
+                            <br/>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 100px">Status</span>
+                                <p:selectOneRadio disabled="#{!customerBean.btnb}" id="Status" value="#{customerBean.targetCust.status}">
+                                    <f:selectItem itemValue="Active" itemLabel="Active"/>
+                                    <f:selectItem itemValue="Inactive" itemLabel="Inactive"/>
+                                </p:selectOneRadio>
+                            </div>
+                            <br/>
+
+                            <div class="input-group">
+                                <p:commandButton id="editBtn" class="btn btn-primary" icon="ui-icon-pencil" rendered="#{!customerBean.btnb}" immediate="true" action="#{customerBean.switchState()}" update="customerform" value="Edit Account Details" style="margin-right: 10px"/>
+                                <p:commandButton id="saveBtn" class="btn btn-primary" icon="ui-icon-check" rendered="#{customerBean.btnb}" process="@this CustID Name Gender E-mail Address Status" action="#{customerBean.editCustomer()}" value="Save" update="customerform"/>
+                                <p:commandButton action="#{customerBean.deleteCustomer()}" rendered="#{!customerBean.btnb}" class="btn btn-danger" immediate="true" value="Delete Customer Account" icon="ui-icon-trash" update="customerform">
+                                    <p:confirm header="Confirmation" message="Are you sure you want to delete this customer account?" icon="ui-icon-alert"/>   
+                                </p:commandButton>
+                            </div>
+                            
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>                            
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog> 
+                        </div>
+                    </p:tab>
+                </p:tabView>   
+            
+        </h:form> 
+    </h:body>
+    <footer id="footer">
+        <p:outputLabel value="Tan Sin Wei (TP034620) - For educational purposes only -" style="font-family: cursive;font-weight: bold;font-size: large;padding: 5px"/>
+    </footer>
+</html>
+

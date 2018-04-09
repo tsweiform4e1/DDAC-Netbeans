@@ -1,0 +1,145 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Manage Agent Accounts</title>
+     <style>
+            .backgroundImg{background-image: url("../resources/images/background.jpg"); background-repeat: no-repeat;background-size: cover;text-align: center}
+        </style>
+    </h:head>
+    <h:body styleClass="backgroundImg">
+        <ui:include src="adminHeader.xhtml"/>
+        <h:form styleClass="form-horizontal" id="agentform">            
+                <br></br>
+                <h1>Manage Agent</h1>
+                <p:tabView dynamic="true" cache="true" effect="fold">
+                    <p:tab title="Register New Agent">
+                        <p:growl id="message1" showDetail="true" autoUpdate="true"/>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1" style="width: 100px">Username</span>
+                            <p:inputText a:placeholder ="Username" styleClass="form-control" value="#{agentBean.tempUN}" required="true" requiredMessage="Please fill in the agent's username." validatorMessage="Minimum legth for Username is 8 values.">
+                                <f:validateLength minimum="8"/>
+                            </p:inputText>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1" style="width: 100px">Password</span>
+                            <p:inputText type="password" a:placeholder ="Password" styleClass="form-control" value="#{agentBean.tempPW}" required="true" requiredMessage="Please fill in the agent's password" validatorMessage="Minimum legth for Password is 8 values.">
+                                <f:validateLength minimum="8"/>
+                            </p:inputText>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1" style="width: 100px">Name</span>
+                            <p:inputText a:placeholder ="Name" styleClass="form-control" value="#{agentBean.tempN}" required="true" requiredMessage="Please fill in the agent's name" validatorMessage="Minimum length for Name is 2 values.">
+                                <f:validateLength minimum="2"/>
+                            </p:inputText>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <h:commandButton value="Register" styleClass="btn btn-primary" action="#{agentBean.registerAgent()}"/>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Agent List">                   
+                        <p:dataTable var="agent" value="#{agentBean.allAgent}" 
+                                     filteredValue="#{agentBean.filteredAgentList}" 
+                                     widgetVar="agentTable" id="agentTable">
+
+                            <f:facet name="header">
+                                <p:outputPanel>
+                                    <h:outputText value="Agent List"/>
+                                </p:outputPanel>
+                            </f:facet>
+
+                            <p:column headerText="AgentID" filterBy="#{agent.agentID}" filterMatchMode="contains" style="width: auto">
+                                <h:outputText value="#{agent.agentID}"/>
+                            </p:column>
+
+                            <p:column headerText="Username" filterBy="#{agent.username}" filterMatchMode="contains" style="width: auto">
+                                <h:outputText value="#{agent.username}"/>
+                            </p:column>
+
+                            <p:column headerText="Name" filterBy="#{agent.name}" filterMatchMode="contains" style="width: auto">
+                                <h:outputText value="#{agent.name}"/>
+                            </p:column>                            
+
+                            <p:column filterBy="#{agent.status}" headerText="Status" filterMatchMode="exact" style="width: auto">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('agentTable').filter()">
+                                        <f:selectItem itemLabel="Select One..." itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{agentBean.statuslist}" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText value="#{agent.status}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    
+                    <p:tab title="Manage Agent Accounts">  
+                        <p:growl id="message2" showDetail="true" autoUpdate="true"/>
+                        <div class="col-sm-10">
+                            <div class="input-group">                                
+                                <h:inputText class="form-control" binding="#{input1}" id="input1" a:placeholder="AgentID" onkeypress="if (event.which &lt; 48 || event.which &gt; 57) return false;"/>
+                                <p:commandButton class="btn btn-secondary" process="@this input1" value="Search" action="#{agentBean.searchAgent(input1.value)}" style="margin-left: 10px" update="AgentID Username Password Name Status"/>
+                            </div>
+                            <br></br>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 100px">AgentID</span>
+                                <p:inputText id="AgentID" type="text" class="form-control" readonly="true" placeholder="AgnetID" value="#{agentBean.targetAgent.agentID}" />
+                            </div>
+                            <br/>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 100px">Username</span>
+                                <p:inputText id="Username" type="text" class="form-control" readonly ='true' placeholder="Username" value="#{agentBean.targetAgent.username}"/>
+                            </div>   
+                            <br/>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 100px">Password</span>
+                                <p:inputText id="Password" type="password" class="form-control" readonly="#{!agentBean.btnb}" placeholder="Password" value="#{agentBean.targetAgent.password}" validatorMessage="Minimum length for Password is 8 values." required="true" requiredMessage="Please fill in the agent's Password.">
+                                    <f:validateLength minimum="8"/>
+                                </p:inputText>
+                            </div>  
+                            <br/>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 100px">Name</span>
+                                <p:inputText id="Name" class="form-control" readonly="#{!agentBean.btnb}" required="true" requiredMessage="Please fill in the agent's name." placeholder="Name" value="#{agentBean.targetAgent.name}" validatorMessage="Minimum length for Name is 2 values.">
+                                    <f:validateLength minimum="2"/>
+                                </p:inputText>
+                            </div>  
+                            <br/>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 100px">Status</span>
+                                <p:selectOneRadio disabled="#{!agentBean.btnb}" id="Status" value="#{agentBean.targetAgent.status}">
+                                    <f:selectItem itemValue="Active" itemLabel="Active"/>
+                                    <f:selectItem itemValue="Inactive" itemLabel="Inactive"/>
+                                </p:selectOneRadio>
+                            </div>
+                            <br/>
+
+                            <div class="input-group">
+                                <p:commandButton id="editBtn" class="btn btn-primary" icon="ui-icon-pencil" rendered="#{!agentBean.btnb}" immediate="true" action="#{agentBean.switchState()}" update="agentform" value="Edit Account Details" style="margin-right: 10px"/>
+                                <p:commandButton id="saveBtn" class="btn btn-primary" icon="ui-icon-check" rendered="#{agentBean.btnb}" action="#{agentBean.editAgent()}" value="Save" update="agentform"/>
+                                <p:commandButton action="#{agentBean.deleteAgent()}" rendered="#{!agentBean.btnb}" class="btn btn-danger" immediate="true" value="Delete Agent Account" icon="ui-icon-trash" update="agentform">
+                                    <p:confirm header="Confirmation" message="Are you sure you want to delete this agent account?" icon="ui-icon-alert"/>   
+                                </p:commandButton>
+                            </div>
+                            
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>                            
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog> 
+                        </div>
+                    </p:tab>
+                </p:tabView>               
+        </h:form> 
+    </h:body>
+    <footer id="footer">
+        <p:outputLabel value="Tan Sin Wei (TP034620) - For educational purposes only -" style="font-family: cursive;font-weight: bold;font-size: large;padding: 5px"/>
+    </footer>
+</html>
+

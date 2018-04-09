@@ -1,0 +1,198 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <h:head>
+        <title>Manage Schedule and Booking</title>
+        <style>
+            .backgroundImg{background-image: url("../resources/images/background.jpg"); background-repeat: no-repeat;background-size: cover;text-align: center}
+        </style>
+    </h:head>
+    <h:body styleClass="backgroundImg">
+        <ui:include src="adminHeader.xhtml"/>
+        <f:event type="preRenderView" listener="#{loginController.showMsgs}" />                   
+        <br></br>
+        <h1>Manage Schedule and Booking</h1>
+        <h:form id="bookscheduleform">            
+            <p:tabView dynamic="true" cache="true" effect="fold" id="tabView">                                             
+                <p:tab title="Register New Schedule">
+                    <p:growl id="message1" showDetail="true" autoUpdate="true" escape="false"/>
+                    <div class="input-group">
+                        <p:selectOneMenu id="ship" value="#{scheduleBean.selected}" style="width:300px">
+                            <f:selectItem itemLabel="Select Ship" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{scheduleBean.allAvailableShip}" />         
+                            <p:ajax listener="#{scheduleBean.loadSelectedShip()}" update="shipID shipName shipCap hide1"/>
+                        </p:selectOneMenu> 
+                        <p:outputLabel value="No ship available at the moment." style="margin-left: 20px;color: red" rendered="#{empty scheduleBean.allAvailableShip}"/>
+                    </div>
+                    <br/>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold">ShipID</span>
+                        <h:inputText a:placeholder ='ShipID' styleClass="form-control col-md-2" value="#{scheduleBean.targetShip.shipID}" readonly="true" id="shipID"/>
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold">Ship Name</span>
+                        <h:inputText a:placeholder ='ShipName' styleClass="form-control" value="#{scheduleBean.targetShip.name}" readonly="true" id="shipName"/>
+                        <h:inputHidden id="hide1" value="#{scheduleBean.targetShip.name}" validatorMessage="Please select a ship">
+                            <f:validateLength minimum="1"/>
+                        </h:inputHidden>
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold">Ship Capacity(ton)</span>
+                        <h:inputText a:placeholder ='Ship Capacity(ton)' styleClass="form-control col-md-2" value="#{scheduleBean.targetShip.capacity}" readonly="true" id="shipCap"/>
+                    </div>
+                    <br/>
+                    <div class="input-group">
+                        <p:calendar style="margin-right: 30px" id="DD" placeholder="Departure Date" value="#{scheduleBean.tempDD}" mindate="#{datepicker.minDD}" maxdate="#{datepicker.maxDD}" required="true" requiredMessage="Please select your ship departure date."/>
+                        <p:calendar id="AD" placeholder="Arrival Date" value="#{scheduleBean.tempAD}" mindate="#{datepicker.minAD}" maxdate="#{datepicker.maxAD}" required="true" requiredMessage="Please select your ship arrival date."/>
+                    </div>
+                    <br/>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold;width: 60px">From</span>
+                        <p:inputText a:placeholder ="Location A" styleClass="form-control" value="#{scheduleBean.tempFrom}" required="true" requiredMessage="Please fill in the route 'From'." validatorMessage="Minimum legth for route 'From' is 2 words.">
+                            <f:validateLength minimum="2"/>
+                        </p:inputText>
+                    </div>
+                    <br/>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold;width: 60px">To</span>
+                        <p:inputText a:placeholder ="Location B" styleClass="form-control" value="#{scheduleBean.tempTo}" required="true" requiredMessage="Please fill in the route 'To'." validatorMessage="Minimum legth for route 'To' is 2 words.">
+                            <f:validateLength minimum="2"/>
+                        </p:inputText>
+                    </div>
+                    <br/>
+                    <div class="input-group">
+                        <h:commandButton value="Register" disabled="#{empty scheduleBean.allAvailableShip}" styleClass="btn btn-primary" action="#{scheduleBean.registerSchedule()}"/>
+                    </div>                 
+                </p:tab>
+                <p:tab title="Schedule List">   
+
+                    <p:dataTable var="schedule" value="#{scheduleBean.allSchedule}" 
+                                 filteredValue="#{scheduleBean.filteredScheduleList}" 
+                                 widgetVar="scheduleTable" id="scheduleTable">
+
+                        <f:facet name="header">
+                            <p:outputPanel>
+                                <h:outputText value="Schedule List"/>
+                            </p:outputPanel>
+                        </f:facet>
+
+                        <p:column headerText="SID" filterBy="#{schedule.SID}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.SID}"/>
+                        </p:column>
+
+                        <p:column headerText="Departure Date" filterBy="#{schedule.depD}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.depD}"/>
+                        </p:column>   
+
+                        <p:column headerText="Arrival Date" filterBy="#{schedule.arvD}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.arvD}"/>
+                        </p:column>   
+
+                        <p:column headerText="ShipID" filterBy="#{schedule.shipID}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.shipID}"/>
+                        </p:column>   
+
+                        <p:column headerText="Ship Name" filterBy="#{schedule.shipName}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.shipName}"/>
+                        </p:column>   
+
+                        <p:column headerText="Ship Capacity(ton)" filterBy="#{schedule.shipCapacity}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.shipCapacity}"/>
+                        </p:column>   
+
+                        <p:column headerText="Available Weight(ton)" filterBy="#{schedule.availWeight}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.availWeight}"/>
+                        </p:column>   
+
+                        <p:column headerText="From" filterBy="#{schedule.from}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.from}"/>
+                        </p:column>   
+
+                        <p:column headerText="To" filterBy="#{schedule.to}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.to}"/>
+                        </p:column>                      
+
+                        <p:column filterBy="#{schedule.status}" headerText="Status" filterMatchMode="exact" style="width: auto">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('scheduleTable').filter()">
+                                    <f:selectItem itemLabel="Select One..." itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{scheduleBean.statuslist}" />
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{schedule.status}"/>
+                        </p:column>
+                    </p:dataTable>   
+
+                </p:tab>
+                <p:tab title="Booking List">                  
+                    <p:growl id="message2" showDetail="true" autoUpdate="true"/>
+                    <p:dataTable var="booking" value="#{bookingBean.allPendingBooking}" widgetVar="bookingTable" id="bookingTable"
+                                 rowKey="#{booking.BID}" selection="#{bookingBean.selectedBooking}" selectionMode="single">
+
+                        <f:facet name="header">
+                            <p:outputPanel>
+                                <h:outputText value="Schedule Booking Request (Right click for actions)"/>
+                            </p:outputPanel>
+                        </f:facet>
+
+                        <p:column headerText="BID" style="width: auto">
+                            <h:outputText value="#{booking.BID}"/>
+                        </p:column>
+
+                        <p:column headerText="AgentID" style="width: auto">
+                            <h:outputText value="#{booking.agentID}"/>
+                        </p:column>   
+
+                        <p:column headerText="CustID" style="width: auto">
+                            <h:outputText value="#{booking.custID}"/>
+                        </p:column>   
+
+                        <p:column headerText="ItemID" style="width: auto">
+                            <h:outputText value="#{booking.itemID}"/>
+                        </p:column>   
+
+                        <p:column headerText="Item Name" style="width: auto">
+                            <h:outputText value="#{booking.itemName}"/>
+                        </p:column>   
+
+                        <p:column headerText="Weight (ton)" style="width: auto">
+                            <h:outputText value="#{booking.weight}"/>
+                        </p:column>   
+
+                        <p:column headerText="SID" style="width: auto">
+                            <h:outputText value="#{booking.SID}"/>
+                        </p:column>  
+                    </p:dataTable>
+
+                    <p:contextMenu for="bookingTable">
+                        <p:menuitem value="Approve" icon="ui-icon-check" onclick="PF('cdlg').show();"/>
+                        <p:menuitem value="Reject" icon="ui-icon-close" onclick="PF('dlg').show();"/>
+                    </p:contextMenu>
+
+                    <p:dialog header="Approve Booking" widgetVar="cdlg" modal="true">
+                        <h:outputText value="Are you sure you want to approve this booking?" />
+                        <br/><br/>                            
+                        <p:commandButton value="Yes" action="#{bookingBean.approveBooking()}" oncomplete="PF('cdlg').hide();" update="bookingTable :tabView:scheduleTable "/>
+                        <p:commandButton value="No" onclick="PF('cdlg').hide();"/>
+                    </p:dialog> 
+
+                    <p:dialog header="Reject Booking" widgetVar="dlg" modal="true">
+                        <h:outputText value="What is the reason for rejecting this booking?" />
+                        <br/><br/>
+                        <h:outputLabel value="Remarks" style="font-weight: bold"/>
+                        <br/>
+                        <h:inputTextarea value="#{bookingBean.selectedBooking.remarks}" style="width: 100%"/>
+                        <br/>
+                        <p:commandButton value="Confirm" action="#{bookingBean.rejectBooking()}" oncomplete="PF('dlg').hide();" update="bookingTable"/>
+                        <p:commandButton value="Cancel" onclick="PF('dlg').hide();"/>
+                    </p:dialog>                  
+                </p:tab>
+            </p:tabView>    
+        </h:form>
+    </h:body>
+    <footer id="footer">
+        <p:outputLabel value="Tan Sin Wei (TP034620) - For educational purposes only -" style="font-family: cursive;font-weight: bold;font-size: large;padding: 5px"/>
+    </footer>
+</html>
+

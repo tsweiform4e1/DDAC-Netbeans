@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <meta charset="utf-8"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"/>
+        <script src="/showcase/javax.faces.resource/jquery/jquery.js.xhtml?ln=primefaces&amp;v=6.1.7"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+
+        <title>Maersk Line CMS</title>
+        <style>
+            .backgroundImg{background-image: url("../resources/images/background.jpg"); background-repeat: no-repeat;background-size: cover;text-align: center}
+        </style>
+    </h:head>
+    <h:body class=" text-center" styleClass="backgroundImg">
+
+        <img src="../resources/images/ML logo.png" height="140" width="600"/>
+        <h1 class="display-1" style="font-weight: 400">Container Management System</h1>
+        <br/>
+        <h2 style="font-size: 50px">Login</h2>
+        <h:form>  
+            <h:panelGrid columns="1"  style="margin: auto">
+                <p:messages id="invalidmsg" autoUpdate="true" />
+                <h:panelGrid columns="2" style="margin-bottom:10px" cellpadding="5">
+                    <p:outputLabel for="console" value="User Type:" style="font-size: 30px"/>
+                    <p:selectOneRadio id="console" value="#{loginController.userType}" style="font-size: 30px" required="true" requiredMessage="Please choose an user type to login.">
+                        <f:selectItem itemLabel="Admin" itemValue="Admin" />
+                        <f:selectItem itemLabel="Agent" itemValue="Agent" />                        
+                    </p:selectOneRadio>
+                </h:panelGrid>
+                <div class="form-group">
+                    <h:inputText id="username" a:placeholder ="Username" styleClass="form-control" required="true" requiredMessage="Please enter your Username !" value="#{loginController.username}" style="width: 440px"/>                       
+                    <h:inputSecret id="password" a:placeholder ="Password" styleClass="form-control" required="true" requiredMessage="Please enter your Password !" value="#{loginController.password}" style="width: 440px"/>                       
+                    <h:commandButton id="loginBtn" value="Login" style="width: 440px" styleClass="btn btn-primary" action="#{loginController.loginValidation()}"/>                       
+                </div>
+            </h:panelGrid>
+        </h:form>       
+    </h:body>
+    <footer id="footer">
+        <p:outputLabel value="Tan Sin Wei (TP034620) - For educational purposes only -" style="font-family: cursive;font-weight: bold;font-size: large;padding: 5px"/>
+    </footer>
+</html>
+

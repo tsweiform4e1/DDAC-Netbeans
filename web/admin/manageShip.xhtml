@@ -1,0 +1,168 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Manage Ship</title>
+     <style>
+            .backgroundImg{background-image: url("../resources/images/background.jpg"); background-repeat: no-repeat;background-size: cover;text-align: center}
+        </style>
+    </h:head>
+    <h:body styleClass="backgroundImg">
+        <ui:include src="adminHeader.xhtml"/>
+        <h:form styleClass="form-horizontal" id="shipform">            
+                <br></br>
+                <h1>Manage Ship</h1>
+                <p:tabView dynamic="true" cache="true" effect="fold">
+                    <p:tab title="Register New Ship">
+                        <p:growl id="message1" showDetail="true" autoUpdate="true"/>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1" style="width: 120px">Name</span>
+                            <p:inputText a:placeholder ="Name" styleClass="form-control" value="#{shipBean.tempN}" required="true" requiredMessage="Please fill in the name." validatorMessage="Minimum legth for Name is 2 values.">
+                                <f:validateLength minimum="2"/>
+                            </p:inputText>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1" style="width: 120px">IMO</span>
+                            <p:inputText type="number" a:placeholder ="IMO" styleClass="form-control" value="#{shipBean.tempIMO}" required="true" requiredMessage="Please fill in the IMO" validatorMessage="The legth for IMO is 7 values.">
+                                <f:validateLength minimum="7" maximum="7"/>
+                            </p:inputText>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1" style="width: 120px">Year Built</span>
+                            <p:inputText type="number" a:placeholder ="Year Built" styleClass="form-control" value="#{shipBean.tempYear}" required="true" requiredMessage="Please fill in the Year Built" validatorMessage="The Year Built should be between 1901 - now.">
+                                <f:validateDoubleRange minimum="1901" maximum="#{shipBean.currentYear}"/>
+                            </p:inputText>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1" style="width: 120px">Capacity(ton)</span>
+                            <p:inputText type="number" a:placeholder ="Capacity(ton)" styleClass="form-control" value="#{shipBean.tempCapacity}" required="true" requiredMessage="Please fill in the Capacity(ton)" validatorMessage="Minimum weight for Capacity is 100 tons.">
+                                <f:validateDoubleRange minimum="100"/>
+                            </p:inputText>
+                        </div>
+                        <br/>
+                        <div class="input-group">
+                            <h:commandButton value="Register" styleClass="btn btn-primary" action="#{shipBean.registerShip()}"/>
+                        </div>
+                    </p:tab>
+                    <p:tab title="Ship List">                   
+                        <p:dataTable var="ship" value="#{shipBean.allShip}" 
+                                     filteredValue="#{shipBean.filteredShipList}" 
+                                     widgetVar="shipTable" id="shipTable">
+
+                            <f:facet name="header">
+                                <p:outputPanel>
+                                    <h:outputText value="Ship List"/>
+                                </p:outputPanel>
+                            </f:facet>
+
+                            <p:column headerText="ShipID" filterBy="#{ship.shipID}" filterMatchMode="contains" style="width: auto">
+                                <h:outputText value="#{ship.shipID}"/>
+                            </p:column>
+
+                            <p:column headerText="Name" filterBy="#{ship.name}" filterMatchMode="contains" style="width: auto">
+                                <h:outputText value="#{ship.name}"/>
+                            </p:column>   
+
+                            <p:column headerText="IMO" filterBy="#{ship.IMO}" filterMatchMode="contains" style="width: auto">
+                                <h:outputText value="#{ship.IMO}"/>
+                            </p:column>   
+
+                            <p:column headerText="Year Built" filterBy="#{ship.year}" filterMatchMode="contains" style="width: auto">
+                                <h:outputText value="#{ship.year}"/>
+                            </p:column>   
+
+                            <p:column headerText="Capacity(ton)" filterBy="#{ship.capacity}" filterMatchMode="contains" style="width: auto">
+                                <h:outputText value="#{ship.capacity}"/>
+                            </p:column>   
+
+                            <p:column filterBy="#{ship.status}" headerText="Status" filterMatchMode="exact" style="width: auto">
+                                <f:facet name="filter">
+                                    <p:selectOneMenu onchange="PF('shipTable').filter()">
+                                        <f:selectItem itemLabel="Select One..." itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{shipBean.statuslist}" />
+                                    </p:selectOneMenu>
+                                </f:facet>
+                                <h:outputText value="#{ship.status}"/>
+                            </p:column>
+                        </p:dataTable>
+                    </p:tab>
+                    <p:tab title="Manage Ship Details">  
+                        <p:growl id="message2" showDetail="true" autoUpdate="true"/>
+                        <div class="col-sm-10">
+                            <div class="input-group">                                
+                                <h:inputText class="form-control" binding="#{input1}" id="input1" a:placeholder="ShipID" onkeypress="if (event.which &lt; 48 || event.which &gt; 57) return false;"/>
+                                <p:commandButton class="btn btn-secondary" process="@this input1" value="Search" action="#{shipBean.searchShip(input1.value)}" style="margin-left: 10px" update="ShipID IMO Year Capacity Status Name"/>                                
+                            </div>
+                            <br></br>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 120px">ShipID</span>
+                                <p:inputText id="ShipID" type="text" class="form-control" readonly="true" placeholder="ShipID" value="#{shipBean.targetShip.shipID}" />
+                            </div>
+                            <br/>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 120px">Name</span>
+                                <p:inputText id="Name" type="text" class="form-control" readonly="#{!shipBean.btnb}" placeholder="Name" value="#{shipBean.targetShip.name}" required="true" requiredMessage="Please fill in the name." validatorMessage="Minimum length for Name is 2 values.">
+                                    <f:validateLength minimum="2"/> 
+                                </p:inputText>
+                            </div> 
+                            <br/>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 120px">IMO</span>
+                                <p:inputText id="IMO" type="number" class="form-control" readonly="#{!shipBean.btnb}" required="true" requiredMessage="Please fill in the IMO" placeholder="IMO" value="#{shipBean.targetShip.IMO}" validatorMessage="The legth for IMO is 7 values.">
+                                    <f:validateLength minimum="7" maximum="7"/>
+                                </p:inputText>
+                            </div>  
+                            <br/>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 120px">Year Built</span>
+                                <p:inputText id="Year" type="number" class="form-control" readonly="#{!shipBean.btnb}" required="true" requiredMessage="Please fill in the Year Built" placeholder="Year Built" value="#{shipBean.targetShip.year}" validatorMessage="The Year Built should be between 1901 - now.">
+                                    <f:validateDoubleRange minimum="1901" maximum="#{shipBean.currentYear}"/>
+                                </p:inputText>
+                            </div>  
+                            <br/>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 120px">Capacity(ton)</span>
+                                <p:inputText id="Capacity" type="number" class="form-control" readonly="#{!shipBean.btnb}"  required="true" requiredMessage="Please fill in the Capacity(ton)" placeholder="Capacity(ton)" value="#{shipBean.targetShip.capacity}"  validatorMessage="Minimum weight for Capacity is 100 tons.">
+                                    <f:validateDoubleRange minimum="100"/>
+                                </p:inputText>
+                            </div>  
+                            <br/>
+                            <div class="input-group">
+                                <span class="input-group-addon" id="basic-addon1" style="width: 120px">Status</span>
+                                <p:selectOneRadio disabled="true" id="Status" value="#{shipBean.targetShip.status}">
+                                    <f:selectItem itemValue="Available" itemLabel="Available"/>
+                                    <f:selectItem itemValue="Occupied" itemLabel="Occupied"/>
+                                </p:selectOneRadio>
+                            </div>
+                            <br/>
+
+                            <div class="input-group">
+                                <p:commandButton id="editBtn" class="btn btn-primary" icon="ui-icon-pencil" rendered="#{!shipBean.btnb}" immediate="true" action="#{shipBean.switchState()}" update="shipform" value="Edit Ship Details" style="margin-right: 10px"/>
+                                <p:commandButton id="saveBtn" class="btn btn-primary" icon="ui-icon-check" rendered="#{shipBean.btnb}" action="#{shipBean.editShip()}" value="Save" update="shipform"/>
+                                <p:commandButton action="#{shipBean.deleteShip()}" rendered="#{!shipBean.btnb}" class="btn btn-danger" immediate="true" value="Delete Ship" icon="ui-icon-trash" update="shipform">
+                                    <p:confirm header="Confirmation" message="Are you sure you want to delete this ship details?" icon="ui-icon-alert"/>   
+                                </p:commandButton>
+
+                            </div>
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>                            
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog> 
+                        </div>
+                    </p:tab>
+                </p:tabView>               
+        </h:form> 
+    </h:body>
+    <footer id="footer">
+        <p:outputLabel value="Tan Sin Wei (TP034620) - For educational purposes only -" style="font-family: cursive;font-weight: bold;font-size: large;padding: 5px"/>
+    </footer>
+</html>
+

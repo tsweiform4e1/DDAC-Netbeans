@@ -1,0 +1,214 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Book Schedule</title>
+        <style>
+          .backgroundImg{background-image: url("../resources/images/background.jpg"); background-repeat: no-repeat;background-size: cover; text-align: center}
+        </style>
+    </h:head>
+    <h:body styleClass="backgroundImg">
+        <ui:include src="agentHeader.xhtml"/>
+        <h:form styleClass="form-horizontal" id="schduleform">   
+            <p:growl id="message1" showDetail="true" autoUpdate="true" escape="false"/>
+
+            <br></br>
+            <h1>Book Schedule</h1>                
+            <p:tabView dynamic="true" cache="true" effect="fold">                    
+                <p:tab title="Booking List">                    
+                    <f:event type="preRenderView" listener="#{loginController.showMsgs()}"/>  
+                    <f:event type="preRenderView" listener="#{messageController.checkedAB()}" />
+                    <p:dataTable var="booking" value="#{bookingBean.allBooking}" 
+                                 filteredValue="#{bookingBean.filteredBookingList}"
+                                 widgetVar="bookingTable" id="bookingTable">
+
+                        <f:facet name="header">
+                            <p:outputPanel>
+                                <h:outputText value="Booking List"/>
+                            </p:outputPanel>
+                        </f:facet>
+
+                        <p:column style="width: 30px;">                                
+                            <p:rowToggler  rendered="#{not empty booking.remarks}"/>
+                        </p:column>
+
+                        <p:column headerText="BID" filterBy="#{booking.BID}" filterStyle="width: 80px;" filterMatchMode="contains" style="width: 100px">
+                            <h:outputText value="#{booking.BID}"/>
+                        </p:column>
+
+                        <p:column headerText="CustID" filterBy="#{booking.custID}" filterStyle="width: 80px;" filterMatchMode="contains" style="width: 100px">
+                            <h:outputText value="#{booking.custID}"/>
+                        </p:column>
+
+                        <p:column headerText="ItemID" filterBy="#{booking.itemID}" filterStyle="width: 80px;" filterMatchMode="contains" style="width: 100px">
+                            <h:outputText value="#{booking.itemID}"/>
+                        </p:column>   
+
+                        <p:column headerText="Item Name" filterBy="#{booking.itemName}" filterStyle="width: auto" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{booking.itemName}"/>
+                        </p:column>   
+
+                        <p:column headerText="Weight" filterBy="#{booking.weight}" filterStyle="width: 80px;" filterMatchMode="contains" style="width: 100px">
+                            <h:outputText value="#{booking.weight}"/>
+                        </p:column>   
+
+                        <p:column headerText="SID" filterBy="#{booking.SID}" filterStyle="width: 80px;" filterMatchMode="contains" style="width: 100px">
+                            <h:outputText value="#{booking.SID}"/>
+                        </p:column>
+
+                        <p:column filterBy="#{booking.status}" headerText="Status" filterMatchMode="exact" style="width: 170px">
+                            <f:facet name="filter">
+                                <p:selectOneMenu onchange="PF('bookingTable').filter()">
+                                    <f:selectItem itemLabel="Select One..." itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{bookingBean.statuslist}" />
+                                </p:selectOneMenu>
+                            </f:facet>
+                            <h:outputText value="#{booking.status}"/>
+                        </p:column>                              
+
+                        <p:rowExpansion>
+                            <h:outputText value="Remarks: " style="font-weight: bold" />
+                            <h:outputText value="#{booking.remarks}" />
+                            <br/><br/>
+                            <p:commandButton value="Got It !" class="btn btn-primary" process="@this" action="#{bookingBean.deleteRejectedBooking(booking.BID)}" update="bookingTable"/>
+                        </p:rowExpansion>
+
+                    </p:dataTable>
+                </p:tab>
+                <p:tab title="Available Schedule List">                   
+                    <p:dataTable var="schedule" value="#{scheduleBean.allOpenSchedule}" 
+                                 filteredValue="#{scheduleBean.filteredScheduleList}" 
+                                 widgetVar="scheduleTable" id="scheduleTable">
+
+                        <f:facet name="header">
+                            <p:outputPanel>
+                                <h:outputText value="Available Schedule List"/>
+                            </p:outputPanel>
+                        </f:facet>
+
+                        <p:column headerText="SID" filterBy="#{schedule.SID}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.SID}"/>
+                        </p:column>
+
+                        <p:column headerText="Departure Date" filterBy="#{schedule.depD}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.depD}"/>
+                        </p:column>   
+
+                        <p:column headerText="Arrival Date" filterBy="#{schedule.arvD}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.arvD}"/>
+                        </p:column>   
+
+                        <p:column headerText="ShipID" filterBy="#{schedule.shipID}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.shipID}"/>
+                        </p:column>   
+
+                        <p:column headerText="Ship Name" filterBy="#{schedule.shipName}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.shipName}"/>
+                        </p:column>   
+
+                        <p:column headerText="Ship Capacity(ton)" filterBy="#{schedule.shipCapacity}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.shipCapacity}"/>
+                        </p:column>   
+
+                        <p:column headerText="Available Weight(ton)" filterBy="#{schedule.availWeight}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.availWeight}"/>
+                        </p:column>   
+
+                        <p:column headerText="From" filterBy="#{schedule.from}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.from}"/>
+                        </p:column>   
+
+                        <p:column headerText="To" filterBy="#{schedule.to}" filterMatchMode="contains" style="width: auto">
+                            <h:outputText value="#{schedule.to}"/>
+                        </p:column>   
+
+                    </p:dataTable>
+                </p:tab>
+                <p:tab title="Book Schedule">  
+                    <p:growl for="message2" showDetail="true"/>                                            
+                    <div class="input-group">
+                        <p:selectOneMenu id="schedule" value="#{bookingBean.selectedS}" style="width:300px">
+                            <f:selectItem itemLabel="Select Schedule" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{scheduleBean.allOpenSchedule}" />         
+                            <p:ajax listener="#{bookingBean.loadSelectedSchedule()}" update="SID DD AD ShipID SName SCap availW From To hide1"/>
+                        </p:selectOneMenu> 
+                        <p:outputLabel value="No Schedule is available at the moment." style="margin-left: 20px;color: red" rendered="#{empty scheduleBean.allOpenSchedule}"/>
+                    </div>
+                    <br/>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold; width: 180px">SID</span>
+                        <h:inputText a:placeholder ='SID' styleClass="form-control col-md-1" value="#{bookingBean.targetSchedule.SID}" readonly="true" id="SID"/>
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold; width: 180px">Departure Date</span>
+                        <h:inputText a:placeholder ='Departure Date' styleClass="form-control" value="#{bookingBean.targetSchedule.depD}" readonly="true" id="DD"/>
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold; width: 180px">Arrival Date</span>
+                        <h:inputText a:placeholder ='Arrival Date' styleClass="form-control" value="#{bookingBean.targetSchedule.arvD}" readonly="true" id="AD"/>
+                    </div>
+                    <br/>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold; width: 180px">ShipID</span>
+                        <h:inputText a:placeholder ='ShipID' styleClass="form-control col-md-1" value="#{bookingBean.targetSchedule.shipID}" readonly="true" id="ShipID"/>
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold; width: 180px">Ship Name</span>
+                        <h:inputText a:placeholder ='Ship Name' styleClass="form-control" value="#{bookingBean.targetSchedule.shipName}" readonly="true" id="SName"/>
+                        <h:inputHidden id="hide1" value="#{bookingBean.targetSchedule.shipName}" validatorMessage="Please select a schedule">
+                            <f:validateLength minimum="1"/>
+                        </h:inputHidden>
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold; width: 180px">Ship Capacity(ton)</span>
+                        <h:inputText a:placeholder ='Ship Capacity(ton)' styleClass="form-control" value="#{bookingBean.targetSchedule.shipCapacity}" readonly="true" id="SCap"/>
+                    </div>
+                    <br/>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold; width: 180px">Available Weight(ton)</span>
+                        <h:inputText a:placeholder ='Available Weight(ton)' styleClass="form-control col-md-1" value="#{bookingBean.targetSchedule.availWeight}" readonly="true" id="availW"/>
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold; width: 180px">From</span>
+                        <h:inputText a:placeholder ='From' styleClass="form-control" value="#{bookingBean.targetSchedule.from}" readonly="true" id="From"/>
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold; width: 180px">To</span>
+                        <h:inputText a:placeholder ='To' styleClass="form-control" value="#{bookingBean.targetSchedule.to}" readonly="true" id="To"/>
+                    </div>                        
+                    <br/>
+                    <div class="input-group">
+                        <p:selectOneMenu id="item" value="#{bookingBean.selectedI}" style="width:300px">
+                            <f:selectItem itemLabel="Select Item" itemValue="" noSelectionOption="true" />
+                            <f:selectItems value="#{itemBean.allUnscheduledItem}" />         
+                            <p:ajax listener="#{bookingBean.loadSelectedItem()}" update="ItemID IName IW custID CName hide2"/>
+                        </p:selectOneMenu> 
+                        <p:outputLabel value="No item is unscheduled at the moment." style="margin-left: 20px;color: red" rendered="#{empty itemBean.allUnscheduledItem}"/>
+                    </div>
+                    <br/>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold; width: 150px">ItemID</span>
+                        <h:inputText a:placeholder ='ItemID' styleClass="form-control col-md-1" value="#{bookingBean.targetItem.itemID}" readonly="true" id="ItemID"/>
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold; width: 150px">Item Name</span>
+                        <h:inputText a:placeholder ='Item Name' styleClass="form-control" value="#{bookingBean.targetItem.name}" readonly="true" id="IName"/>
+                        <h:inputHidden id="hide2" value="#{bookingBean.targetItem.name}" validatorMessage="Please select an item.">
+                            <f:validateLength minimum="1"/>
+                        </h:inputHidden>
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold; width: 150px">Item Weight(ton)</span>
+                        <h:inputText a:placeholder ='Item Weight(ton)' styleClass="form-control col-md-1" value="#{bookingBean.targetItem.weight}" readonly="true" id="IW"/>
+                    </div>
+                    <br/>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold; width: 150px">CustID</span>
+                        <h:inputText a:placeholder ='CustID' styleClass="form-control col-md-1" value="#{bookingBean.targetItem.custID}" readonly="true" id="custID"/>
+                        <span class="input-group-addon" id="basic-addon1" style="font-weight: bold; width: 150px">Customer Name</span>
+                        <h:inputText a:placeholder ='Customer Name' styleClass="form-control" value="#{bookingBean.targetItem.custName}" readonly="true" id="CName"/>                            
+                    </div>  
+                    <br/>
+                    <div class="input-group">
+                        <h:commandButton value="Book Schedule" disabled="#{empty scheduleBean.allOpenSchedule || empty itemBean.allUnscheduledItem}" styleClass="btn btn-primary" action="#{bookingBean.registerBooking()}"/>
+                    </div>
+                    <br/>
+                </p:tab>
+            </p:tabView>   
+
+        </h:form> 
+    </h:body>
+    <footer id="footer">
+        <p:outputLabel value="Tan Sin Wei (TP034620) - For educational purposes only -" style="font-family: cursive;font-weight: bold;font-size: large;padding: 5px"/>
+    </footer>
+</html>
+

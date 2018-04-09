@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Agent Home</title>
+            <style>
+            .backgroundImg{background-image: url("../resources/images/background.jpg"); background-repeat: no-repeat;background-size: cover; text-align: center}
+        </style>
+    </h:head>
+    <h:body styleClass="backgroundImg">
+        <h:form>
+            <ui:include src="agentHeader.xhtml"/>
+            <p:messages autoUpdate="true" closable="true" id="notification"/>
+            <f:event type="preRenderView" listener="#{loginController.showMsgs}" />            
+            <br/>
+            <h:outputLabel value="Good Day #{loginController.loginName} !" style="font-size: xx-large;font-weight: bold;margin-right: 20px"/>
+            <p:commandButton rendered="false"/>
+            <br/>
+            <div class="container">
+            <p:panelGrid columns="3" layout="grid" styleClass="ui-panelgrid-blank">
+                <h:link class="nav-link" outcome="manageCustomer.xhtml" >
+                    <img src="../resources/images/Customer.jpg" style="height: 300px;width: 350px"/>
+                </h:link>
+                <h:link class="nav-link" outcome="manageItem.xhtml" >
+                    <img src="../resources/images/Container.jpg" style="height: 300px;width: 350px"/>
+                </h:link>
+                <h:link class="nav-link" outcome="bookSchedule.xhtml" >
+                    <img src="../resources/images/Booking.jpg" style="height: 300px;width: 350px"/>
+                </h:link>
+            </p:panelGrid>
+                </div>
+        </h:form>
+    </h:body>
+    <footer id="footer">
+        <p:outputLabel value="Tan Sin Wei (TP034620) - For educational purposes only -" style="font-family: cursive;font-weight: bold;font-size: large;padding: 5px"/>
+    </footer>
+</html>
+

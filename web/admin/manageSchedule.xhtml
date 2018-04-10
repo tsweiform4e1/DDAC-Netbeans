@@ -14,13 +14,14 @@
     </h:head>
     <h:body styleClass="backgroundImg">
         <ui:include src="adminHeader.xhtml"/>
-        <f:event type="preRenderView" listener="#{loginController.showMsgs}" />                   
-        <br></br>
-        <h1>Manage Schedule and Booking</h1>
-        <h:form id="bookscheduleform">            
+
+        <h:form styleClass="form-horizontal" id="bookscheduleform">    
+            <f:event type="preRenderView" listener="#{loginController.showMsgs}" />  
+            <br></br>
+            <h1>Manage Schedule and Booking</h1>
             <p:tabView dynamic="true" cache="true" effect="fold" id="tabView">                                             
                 <p:tab title="Register New Schedule">
-                    <p:growl id="message1" showDetail="true" autoUpdate="true" escape="false"/>
+                    <p:growl id="message1" showDetail="true" autoUpdate="true"/>                    
                     <div class="input-group">
                         <p:selectOneMenu id="ship" value="#{scheduleBean.selected}" style="width:300px">
                             <f:selectItem itemLabel="Select Ship" itemValue="" noSelectionOption="true" />
@@ -35,9 +36,7 @@
                         <h:inputText a:placeholder ='ShipID' styleClass="form-control col-md-2" value="#{scheduleBean.targetShip.shipID}" readonly="true" id="shipID"/>
                         <span class="input-group-addon" id="basic-addon1" style="font-weight: bold">Ship Name</span>
                         <h:inputText a:placeholder ='ShipName' styleClass="form-control" value="#{scheduleBean.targetShip.name}" readonly="true" id="shipName"/>
-                        <h:inputHidden id="hide1" value="#{scheduleBean.targetShip.name}" validatorMessage="Please select a ship">
-                            <f:validateLength minimum="1"/>
-                        </h:inputHidden>
+                        <h:inputHidden id="hide1" value="#{scheduleBean.targetShip.name}" required="true" requiredMessage="Please select a ship"/>
                         <span class="input-group-addon" id="basic-addon1" style="font-weight: bold">Ship Capacity(ton)</span>
                         <h:inputText a:placeholder ='Ship Capacity(ton)' styleClass="form-control col-md-2" value="#{scheduleBean.targetShip.capacity}" readonly="true" id="shipCap"/>
                     </div>
@@ -49,21 +48,21 @@
                     <br/>
                     <div class="input-group">
                         <span class="input-group-addon" id="basic-addon1" style="font-weight: bold;width: 60px">From</span>
-                        <p:inputText a:placeholder ="Location A" styleClass="form-control" value="#{scheduleBean.tempFrom}" required="true" requiredMessage="Please fill in the route 'From'." validatorMessage="Minimum legth for route 'From' is 2 words.">
+                        <p:inputText id="from" a:placeholder ="Location A" styleClass="form-control" value="#{scheduleBean.tempFrom}" required="true" requiredMessage="Please fill in the route 'From'." validatorMessage="Minimum legth for route 'From' is 2 words.">
                             <f:validateLength minimum="2"/>
                         </p:inputText>
                     </div>
                     <br/>
                     <div class="input-group">
                         <span class="input-group-addon" id="basic-addon1" style="font-weight: bold;width: 60px">To</span>
-                        <p:inputText a:placeholder ="Location B" styleClass="form-control" value="#{scheduleBean.tempTo}" required="true" requiredMessage="Please fill in the route 'To'." validatorMessage="Minimum legth for route 'To' is 2 words.">
+                        <p:inputText id="to" a:placeholder ="Location B" styleClass="form-control" value="#{scheduleBean.tempTo}" required="true" requiredMessage="Please fill in the route 'To'." validatorMessage="Minimum legth for route 'To' is 2 words.">
                             <f:validateLength minimum="2"/>
                         </p:inputText>
                     </div>
                     <br/>
                     <div class="input-group">
                         <h:commandButton value="Register" disabled="#{empty scheduleBean.allAvailableShip}" styleClass="btn btn-primary" action="#{scheduleBean.registerSchedule()}"/>
-                    </div>                 
+                    </div>                        
                 </p:tab>
                 <p:tab title="Schedule List">   
 
@@ -125,8 +124,7 @@
                     </p:dataTable>   
 
                 </p:tab>
-                <p:tab title="Booking List">                  
-                    <p:growl id="message2" showDetail="true" autoUpdate="true"/>
+                <p:tab title="Booking List">                            
                     <p:dataTable var="booking" value="#{bookingBean.allPendingBooking}" widgetVar="bookingTable" id="bookingTable"
                                  rowKey="#{booking.BID}" selection="#{bookingBean.selectedBooking}" selectionMode="single">
 
@@ -166,15 +164,15 @@
                     </p:dataTable>
 
                     <p:contextMenu for="bookingTable">
-                        <p:menuitem value="Approve" icon="ui-icon-check" onclick="PF('cdlg').show();"/>
-                        <p:menuitem value="Reject" icon="ui-icon-close" onclick="PF('dlg').show();"/>
+                        <p:menuitem value="Approve" immediate="true" icon="ui-icon-check" onclick="PF('cdlg').show();"/>
+                        <p:menuitem value="Reject" immediate="true" icon="ui-icon-close" onclick="PF('dlg').show();"/>
                     </p:contextMenu>
 
                     <p:dialog header="Approve Booking" widgetVar="cdlg" modal="true">
                         <h:outputText value="Are you sure you want to approve this booking?" />
                         <br/><br/>                            
-                        <p:commandButton value="Yes" action="#{bookingBean.approveBooking()}" oncomplete="PF('cdlg').hide();" update="bookingTable :tabView:scheduleTable "/>
-                        <p:commandButton value="No" onclick="PF('cdlg').hide();"/>
+                        <p:commandButton value="Yes" action="#{bookingBean.approveBooking()}" process="@this bookingTable" oncomplete="PF('cdlg').hide();" update="bookingTable scheduleTable"/>
+                        <p:commandButton value="No" immediate="true" onclick="PF('cdlg').hide();"/>
                     </p:dialog> 
 
                     <p:dialog header="Reject Booking" widgetVar="dlg" modal="true">
@@ -182,11 +180,11 @@
                         <br/><br/>
                         <h:outputLabel value="Remarks" style="font-weight: bold"/>
                         <br/>
-                        <h:inputTextarea value="#{bookingBean.selectedBooking.remarks}" style="width: 100%"/>
+                        <h:inputTextarea value="#{bookingBean.selectedBooking.remarks}" style="width: 100%" id="reason"/>
                         <br/>
-                        <p:commandButton value="Confirm" action="#{bookingBean.rejectBooking()}" oncomplete="PF('dlg').hide();" update="bookingTable"/>
-                        <p:commandButton value="Cancel" onclick="PF('dlg').hide();"/>
-                    </p:dialog>                  
+                        <p:commandButton value="Confirm" action="#{bookingBean.rejectBooking()}" process="@this reason bookingTable" oncomplete="PF('dlg').hide();" update="bookingTable"/>
+                        <p:commandButton value="Cancel" immediate="true" onclick="PF('dlg').hide();"/>
+                    </p:dialog>                            
                 </p:tab>
             </p:tabView>    
         </h:form>

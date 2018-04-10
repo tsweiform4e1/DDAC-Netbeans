@@ -12,7 +12,7 @@ package Model;
 public class Booking {
 
     private int BID, SID, AgentID, CustID, ItemID;
-    private String itemName, status, remarks;
+    private String itemName, status, remarks = "";
     private double weight;
 
     public Booking() {

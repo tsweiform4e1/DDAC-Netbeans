@@ -34,7 +34,7 @@
                         <div class="input-group">
                             <span class="input-group-addon" id="basic-addon1" style="width: 150px">Customer Name</span>
                             <p:inputText id="CustName" placeholder ="Customer's Name" readonly="true" styleClass="form-control" value="#{itemBean.tempCName}"/>
-                            <h:inputHidden id="hide2" value="#{itemBean.tempCName}" validatorMessage="Please search for a customer">
+                            <h:inputHidden id="hide2" value="#{itemBean.tempCName}" validatorMessage="Please search for a customer" required="true" requiredMessage="Please search for a customer.">
                                 <f:validateLength minimum="2"/>
                             </h:inputHidden>
                         </div>

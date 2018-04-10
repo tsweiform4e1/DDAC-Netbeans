@@ -26,7 +26,8 @@ public class DB_Connection {
         Connection con = null;
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ddac-maerskline?useSSL=false", "root", "12345");
+            //con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ddac-maerskline?useSSL=false", "root", "12345"); // Local Connection
+            con =DriverManager.getConnection("jdbc:mysql://ddac-mysql-server.mysql.database.azure.com:3306/ddac-maerskline?useSSL=true&requireSSL=false","mladmin@ddac-mysql-server", "Tswei12345");  //Azure Connection
             System.out.println("Connection to DB is successful !");
             
         } catch (Exception e) {
